@@ -1,0 +1,65 @@
+# packagefinder
+
+This application is used to search for software packages. It is fully compatible with all versions of Slackel, Slackware and Salix distributions.
+
+✨ Main Features:
+
+    Universal Support: Full functionality for Slackel, Slackware and Salix.
+
+    All Versions: Compatibility with every version of the above distributions.
+
+    Official Repositories: Direct access to the central repos of the ecosystem.
+
+    Third-Party Repos: Integration of external third-party repositories for the Slackware ecosystem.
+
+    Single Search: Locate official and third-party packages in one environment.
+
+🛠️ Technologies & Architecture:
+
+The application was developed with modern and efficient technologies:
+
+    Python & HTML: The core of the application and the graphical user interface.
+
+    JSON: Use of JSON files for fast and direct package search.
+
+    Mariadb Database: Built-in database for recording statistics.
+
+📊 Statistics & User Login:
+Through the SQLite database, the application collects anonymous statistics to improve your experience:
+
+    Number of Online Users: Monitoring of active users in real time.
+
+    Operating System: Recording of the distribution/version used for the connection.
+
+    Statistics Tab: All connection data and user statistics are immediately visualized through the special built-in tab of the application statistics.
+
+    Avg Graphs: The page includes specialized graphs that display the average of users for the last 7 days (avg last 7 days) as well as for the last 30 days (avg last 30 days) for better monitoring of long-term activity.
+
+Examples:
+To search for a package
+
+    choose from Repository: All Repositories, Arch: x86_64, In Search type firefox
+    You get results for all Repositories, for firefox all versions x86_64 package.
+
+    choose from Repository: 15.0 Arch: x86_64, In Search type firefox
+    You get results for all Repositories 15.0 , for firefox x86_64 package.
+
+    Typing firefox-152 or firefox 152 get firefox 152 x86_64 package of slackel
+    Typing firefox salix get all firefox packages for all salix versions
+    Typing firefox salix 15 or firefox 15 salix get firefox package for salix 15.0 version
+    Typing firefox slackware 15 get firefox package for slackware 15.0
+    Typing firefox slackware current get firefox package for slackware current
+    Typing firefox slackware get firefox package for all slackware versions
+
+    choose from Repository: salix 15.0 in search type geany you get geany and geany-plugins and geany-themes for salix 15.0
+    Typing geany 2.1 you get eany and geany-plugins
+
+Copyright (C) 2026 Dimitris Tzemos <dijemos@gmail.com>
+This program is free software: you can redistribute it and/or modify it under the terms 
+of the GNU General Public License as published by the Free Software Foundation, 
+either version 2 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty 
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License at <http://www.gnu.org/licenses/> for more details.
+

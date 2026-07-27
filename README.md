@@ -1,1 +1,0 @@
-# packagefinder-mariadb

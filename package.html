@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/pick-list.ico" />
+<meta charset="utf-8">
+<title>Package Details</title>
+
+<style>
+/* ΟΡΙΣΜΟΣ ΜΕΤΑΒΛΗΤΩΝ ΓΙΑ LIGHT ΚΑΙ DARK MODE */
+:root {
+    --bg-color: #fdfdfd;
+    --text-color: #333333;
+    --heading-color: #222222;
+    --card-bg: #ffffff;
+    --card-border: #ccc;
+    --table-th-bg: #f4f4f4;
+    --table-hover: #f9f9f9;
+    --pre-bg: #f4f4f4;
+    --badge-bg: #e0e0e0;
+    --badge-text: #333333;
+    --badge-hover: #ccc;
+}
+
+body.dark-mode {
+    --bg-color: #1a202c;
+    --text-color: #e2e8f0;
+    --heading-color: #ffffff;
+    --card-bg: #2d3748;
+    --card-border: #4a5568;
+    --table-th-bg: #4a5568;
+    --table-hover: #2d3748;
+    --pre-bg: #2d3748;
+    --badge-bg: #4a5568;
+    --badge-text: #edf2f7;
+    --badge-hover: #718096;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 30px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+h1, h2 {
+    color: var(--heading-color);
+}
+
+.nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.theme-toggle-btn {
+    background: #4a5568;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+body.dark-mode .theme-toggle-btn {
+    background: #edf2f7;
+    color: #1a202c;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 25px;
+    background: var(--card-bg);
+}
+
+td, th {
+    border: 1px solid var(--card-border);
+    padding: 10px;
+}
+
+th {
+    text-align: left;
+    background: var(--table-th-bg);
+    width: 220px;
+}
+
+tr:hover {
+    background: var(--table-hover);
+}
+
+pre {
+    background: var(--pre-bg);
+    color: var(--text-color);
+    padding: 15px;
+    border-left: 4px solid #2d7;
+    font-family: monospace;
+    white-space: pre-wrap;
+    max-width: 800px;
+    font-size: 14px;
+    border-top: 1px solid var(--card-border);
+    border-right: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+}
+
+ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.dep-link {
+    display: inline-block;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    padding: 3px 8px;
+    margin: 2px;
+    border-radius: 4px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.dep-link:hover {
+    background: var(--badge-hover);
+}
+
+a {
+    color: #4299e1;
+}
+
+/* ΠΡΟΣΘΗΚΗ: Το στυλ του Footer */
+.footer {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid var(--card-border);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-weight: 500;
+}
+.footer a {
+    color: #4299e1;
+    text-decoration: none;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    body {
+        margin: 15px;
+    }
+    
+    .nav-header {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    /* Μετατρέπουμε τον πίνακα σε "κατακόρυφα blocks" για να χωράει τέλεια στο κινητό */
+    table, tr, th, td {
+        display: block;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    th {
+        background: var(--table-th-bg);
+        border-bottom: none;
+        padding-bottom: 5px;
+        font-weight: bold;
+    }
+
+    td {
+        padding-top: 5px;
+        margin-bottom: 10px;
+        border-top: none;
+    }
+
+    /* Εξασφάλιση ότι η περιγραφή δεν βγαίνει εκτός οθόνης */
+    pre {
+        max-width: 100%;
+        font-size: 12.5px;
+        padding: 10px;
+        overflow-x: auto;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="nav-header">
+    <div>
+        <a href="javascript:history.back()" style="text-decoration: none;">
+            <span style="text-decoration: none; display: inline-block;">←</span> 
+            <span style="text-decoration: underline;">Back</span>
+        </a>
+        |
+        <a href="index.html">Slackel Package Finder</a>
+    </div>
+    <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+</div>
+
+<h1>Package Details</h1>
+
+<div id="package">
+Loading...
+</div>
+
+<!-- ΠΡΟΣΘΗΚΗ: Το HTML του Footer -->
+<div class="footer">
+    &copy; 2026 Developed by <strong>Dimitris Tzemos</strong>. All rights reserved | <a href="index.html">Slackel Package Finder</a>
+</div>
+<script>
+function initTheme() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-toggle').innerText = "☀️ Light Mode";
+    }
+}
+
+function toggleTheme() {
+    let btn = document.getElementById('theme-toggle');
+    if (document.body.classList.contains('dark-mode')) {
+        document.body.classList.remove('dark-mode');
+        btn.innerText = "🌙 Dark Mode";
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.add('dark-mode');
+        btn.innerText = "☀️ Light Mode";
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+initTheme();
+
+const params = new URLSearchParams(window.location.search);
+const packageName = params.get("package");
+const repo = params.get("repo");
+const archParam = params.get("arch") || "all";
+
+fetch(
+    "/api/package.py?package=" +
+    encodeURIComponent(packageName) +
+    "&repo=" +
+    encodeURIComponent(repo)
+)
+.then(r => r.json())
+.then(p => {
+
+    if (p.error) {
+        document.getElementById("package").innerHTML = `<h2>Error: ${p.error}</h2>`;
+        return;
+    }
+
+    let html = `
+    <h2>Repository</h2>
+    <table>
+        <tr>
+            <th>Repository</th>
+            <td>
+                <a href="repository.html?id=${p.repository_info?.id || p.repository_id || ''}">
+                    ${p.repository_info?.repository_name || p.repository || "Unknown"}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>Repository brief</th>
+            <td>${p.repository_info?.brief || p.repository || ""}</td>
+        </tr>
+        <tr>
+            <th>Repository description</th>
+            <td>${p.repository_info?.description || "No description available."}</td>
+        </tr>
+        <tr>
+            <th>Repository url</th>
+            <td>
+                <a href="${p.repository_info?.url || ""}" target="_blank">
+                    ${p.repository_info?.url || ""}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>File list</th>
+            <td>${p.repository_info?.packages || "None"}</td>
+        </tr>
+    </table>
+
+    <h2>Package</h2>
+    <table>
+        <tr>
+            <th>Package name</th>
+            <td><strong>${p.name}</strong></td>
+        </tr>
+        <tr>
+            <th>Package version</th>
+            <td>${p.version}</td>
+        </tr>
+        <tr>
+            <th>Package arch</th>
+            <td><code>${p.arch}</code></td>
+        </tr>
+        <tr>
+            <th>Package build</th>
+            <td>${p.build || "N/A"}</td>
+        </tr>
+        <tr>
+            <th>Package size (compressed)</th>
+            <td>${p.size || "N/A"}</td>
+        </tr>
+        <tr>
+            <th>Package compression</th>
+            <td>txz</td>
+        </tr>
+        <tr>
+            <th>Package required</th>
+            <td>
+                <div id="deps"></div>
+            </td>
+        </tr>
+        <tr>
+            <th>Package location</th>
+            <td>
+                <a href="${p.location_url}" target="_blank">${p.location}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Package filename</th>
+            <td>
+                <a href="${p.download}" target="_blank"><strong>${p.package}</strong></a>
+            </td>
+        </tr>
+    </table>
+
+    <h2>Description:</h2>
+    <pre id="description">${p.description || "No description provided."}</pre>
+    `;
+
+    document.getElementById("package").innerHTML = html;
+
+    let depsHtml = "";
+    if (p.dependencies && p.dependencies.length > 0) {
+        depsHtml = p.dependencies.map(d => {
+            let cleanDep = d.split('|').pop().trim();
+            return `<a class="dep-link" href="index.html?search=${encodeURIComponent(cleanDep)}&arch=${encodeURIComponent(archParam)}">${d}</a>`;
+        }).join(' ');
+    } else {
+        depsHtml = "<em>None</em>";
+    }
+    
+    document.getElementById("deps").innerHTML = depsHtml;
+
+    if (
+        p.repository_info &&
+        p.repository_info.file_list &&
+        p.repository_info.file_list.includes("MANIFEST")
+    ) {
+        fetch(
+            "/api/files.py?package=" +
+            encodeURIComponent(p.package) +
+            "&repo=" +
+            encodeURIComponent(p.repository_info.id)
+        )
+        .then(r => r.json())
+        .then(f => {
+            console.log("files:", f);
+            if (f.count > 0) {
+                const description = document.getElementById("description");
+                description.textContent += "\n\nThis package contains " + f.count + " files:\n\n";
+                description.textContent += f.files.join("\n");
+            }
+        })
+        .catch(err => console.error("Error loading manifest files:", err));
+    }
+})
+.catch(err => {
+    document.getElementById("package").innerHTML = "<h2>Error: Unable to load package data. Please check connection or API.</h2>";
+    console.error("Fetch error:", err);
+});
+</script>
+
+</body>
+</html>

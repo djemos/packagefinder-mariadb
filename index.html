@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon1.ico" />
+<meta charset="utf-8">
+<title>Slackel Package Finder</title>
+
+<style>
+/* ΟΡΙΣΜΟΣ ΜΕΤΑΒΛΗΤΩΝ ΓΙΑ LIGHT ΚΑΙ DARK MODE */
+:root {
+    --bg-color: #fdfdfd;
+    --text-color: #333333;
+    --heading-color: #222222;
+    --card-bg: #ffffff;
+    --card-border: #ccc;
+    --table-th-bg: #f4f4f4;
+    --table-hover: #f7fafc;
+    --input-bg: #ffffff;
+    --input-border: #ccc;
+    --badge-bg: #e0e0e0;
+    --badge-text: #333333;
+    --badge-hover: #ccc;
+}
+
+body.dark-mode {
+    --bg-color: #1a202c;
+    --text-color: #e2e8f0;
+    --heading-color: #ffffff;
+    --card-bg: #2d3748;
+    --card-border: #4a5568;
+    --table-th-bg: #4a5568;
+    --table-hover: #2d3748;
+    --input-bg: #2d3748;
+    --input-border: #4a5568;
+    --badge-bg: #4a5568;
+    --badge-text: #edf2f7;
+    --badge-hover: #718096;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 30px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+h1 {
+    color: var(--heading-color);
+}
+
+input, button, select {
+    font-size:16px;
+    padding:6px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+}
+
+.nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.nav-links a {
+    color: #4299e1;
+    text-decoration: none;
+}
+
+.theme-toggle-btn {
+    background: #4a5568;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+body.dark-mode .theme-toggle-btn {
+    background: #edf2f7;
+    color: #1a202c;
+}
+
+.filter-group {
+    margin-bottom: 12px;
+}
+
+.filter-group label {
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.search-hint {
+    font-size: 13px;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-top: 5px;
+}
+.dep-badge {
+    background: var(--badge-bg);
+    padding: 2px 6px;
+    margin: 2px;
+    display: inline-block;
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--badge-text);
+    text-decoration: none;
+}
+
+.dep-badge:hover {
+    background: var(--badge-hover);
+}
+
+table {
+    margin-top: 20px;
+    border-collapse: collapse;
+    width: 100%;
+    background: var(--card-bg);
+}
+
+th, td {
+    border: 1px solid var(--card-border);
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background: var(--table-th-bg);
+}
+
+tr:hover {
+    background-color: var(--table-hover);
+}
+
+a {
+    color: #4299e1;
+}
+
+.footer {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid var(--card-border);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-weight: 500;
+}
+.footer a {
+    color: #4299e1;
+    text-decoration: none;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #4299e1;
+    text-decoration: none;
+    font-weight: 500;
+}
+.back-link:hover {
+    text-decoration: underline;
+}
+
+body {
+    font-family: sans-serif;
+    padding: 30px; 
+    margin: 0;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+    
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+</style>
+</head>
+<body>
+<div style="flex: 1;">
+	
+<a href="javascript:void(0);" class="back-link" onclick="window.history.length > 1 ? history.back() : window.location.href='index.html';">← Back</a>
+
+<div class="nav-header">
+    <h1>Package Finder</h1>
+    <div class="nav-links">
+        <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="repositories.html">Repositories</a> | <a href="index.html">Package Finder Home</a> | <a href="stats.html" style="font-weight: bold;">Statistics</a>
+    </div>
+</div>
+<br>
+
+<form onsubmit="searchPackages(); return false;">
+
+    <div class="filter-group">
+        <label for="search_type"><strong>Search by:</strong></label>
+        <select id="search_type">
+            <option value="name">Search(*): Package Name</option>
+            <option value="description">Description:</option>
+            <option value="filename">Filename:</option>
+        </select>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;
+
+        <label for="distro_filter"><strong>Repository:</strong></label>
+        <select id="distro_filter" onchange="searchPackages();">
+            <option value="">-- All Repositories --</option>
+            <optgroup label="Distro">
+                <option value="current">current</option>
+                <option value="15.0">15.0</option>
+                <option value="14.2">14.2</option>
+                <option value="14.1">14.1</option>
+                <option value="14.0">14.0</option>
+            </optgroup>            
+            <optgroup label="Slackel">
+                <option value="slackel">Slackel Current</option>
+            </optgroup>
+            <optgroup label="Slackware (Official)">
+                <option value="slackware current">Slackware Current</option>
+                <option value="slackware 15.0">Slackware 15.0</option>
+                <option value="slackware 14.2">Slackware 14.2</option>
+                <option value="slackware 14.1">Slackware 14.1</option>
+                <option value="slackware 14.0">Slackware 14.0</option>
+            </optgroup>
+            <optgroup label="Salix">
+                <option value="salix 15.0">Salix 15.0</option>
+                <option value="salix 14.2">Salix 14.2</option>
+                <option value="salix 14.1">Salix 14.1</option>
+                <option value="salix 14.0">Salix 14.0</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div class="filter-group">
+        <input id="search" name="search" placeholder="Enter words..." autocomplete="on" style="width: 300px;">
+        <button type="submit" style="cursor:pointer; font-weight:bold;">Search</button>
+        <div class="search-hint">* Enter one or more words space separated. Can also enter package version</div>
+    </div>
+
+    <div class="filter-group">
+        <strong>Architecture:</strong>
+        <label><input type="radio" name="arch" value="all" onchange="changeArch()" checked> All</label>
+        <label><input type="radio" name="arch" value="i386" onchange="changeArch()"> i386</label>
+        <label><input type="radio" name="arch" value="x86_64" onchange="changeArch()"> x86_64</label>
+        <label><input type="radio" name="arch" value="noarch" onchange="changeArch()"> noarch</label>
+    </div>
+
+</form>
+
+<div id="counter" style="margin-top:15px; font-weight:bold;"></div>
+
+<!-- ΠΡΟΣΘΗΚΗ: Το ΠΑΝΩ container σελιδοποίησης (πριν από τα αποτελέσματα) -->
+<div id="pagination-container-top" style="margin-top: 15px; margin-bottom: 10px; text-align: center; font-size: 15px;"></div>
+
+<div id="results"></div>
+
+<!-- Το ΚΑΤΩ container σελιδοποίησης (μετά τα αποτελέσματα) -->
+<div id="pagination-container" style="margin-top: 25px; text-align: center; font-size: 15px;"></div>
+
+</div>
+
+<div class="footer">
+    &copy; 2026 Developed by <strong>Dimitris Tzemos</strong>. All rights reserved | <a href="index.html">Package Finder</a>
+</div>
+
+<script>
+let activeRepoFilter = "";
+let isInitialSetup = true;
+let allFetchedPackages = []; // Αποθήκευση όλων των πακέτων από το backend
+let currentPage = 1;         // Τρέχουσα σελίδα
+const perPage = 30;          // Σταθερά 30 στοιχεία ανά σελίδα
+
+function initTheme() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-toggle').innerText = "☀️ Light Mode";
+    }
+}
+
+function toggleTheme() {
+    let btn = document.getElementById('theme-toggle');
+    if (document.body.classList.contains('dark-mode')) {
+        document.body.classList.remove('dark-mode');
+        btn.innerText = "🌙 Dark Mode";
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.add('dark-mode');
+        btn.innerText = "☀️ Light Mode";
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+function changeArch() {
+    searchPackages();
+}
+function searchPackages(){
+    let searchBoxValue = document.getElementById("search").value.trim(); 
+    let distroSelectValue = document.getElementById("distro_filter").value;
+    
+    if (searchBoxValue === "") {
+        document.getElementById("counter").innerText = "";
+        document.getElementById("results").innerHTML = "";
+        document.getElementById("pagination-container-top").innerHTML = "";
+        document.getElementById("pagination-container").innerHTML = "";
+        allFetchedPackages = [];
+        return;
+    }
+
+    let q = activeRepoFilter ? activeRepoFilter : searchBoxValue;
+    if (distroSelectValue && !activeRepoFilter) {
+        q = `${searchBoxValue} ${distroSelectValue}`;
+    }
+
+    // Σωστό, σχετικό μονοπάτι χωρίς αρχική κάθετο
+    fetch('api/stats.py', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: q })
+    }).catch(err => console.error("Stats error:", err));
+
+    let selectedArch = document.querySelector('input[name="arch"]:checked').value;
+    let searchType = document.getElementById("search_type").value;
+
+    // Σωστό, σχετικό μονοπάτι χωρίς αρχική κάθετο
+    let apiUrl = `api/packages.py?q=${encodeURIComponent(q)}&type=${searchType}&arch=${selectedArch}`;
+
+    document.getElementById("counter").innerText = "Searching...";
+    document.getElementById("results").innerHTML = "";
+    document.getElementById("pagination-container-top").innerHTML = "";
+    document.getElementById("pagination-container").innerHTML = "";
+
+    fetch(apiUrl)
+    .then(r => r.json())
+    .then(data => {
+        data.sort((a,b) => Number(b.rank) - Number(a.rank));
+        
+        allFetchedPackages = data;
+        document.getElementById("counter").innerText = `Found ${allFetchedPackages.length} package(s)`;
+
+        // Εμφάνιση της 1ης σελίδας
+        displayCurrentPage(1);
+    })
+    .catch(err => {
+        document.getElementById("counter").innerText = "Error fetching results.";
+        console.error(err);
+    });
+}
+// ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Απομονώνει και σχεδιάζει μόνο 30 πακέτα για την επιλεγμένη σελίδα
+function displayCurrentPage(page) {
+    currentPage = page;
+    
+    // Υπολογισμός των δεικτών για το slice (ανά 30 στοιχεία)
+    let start_idx = (currentPage - 1) * perPage;
+    let end_idx = start_idx + perPage;
+    let slicedPackages = allFetchedPackages.slice(start_idx, end_idx);
+
+    let selectedArch = document.querySelector('input[name="arch"]:checked').value;
+
+    let html = `
+    <table>
+    <tr>
+    <th>Rank</th>
+    <th>Package</th>
+    <th>Version</th>
+    <th>Arch</th>
+    <th>Size</th>
+    <th>Distro</th>
+    <th>Repository</th>
+    <th>Location</th>
+    <th>Download</th>
+    </tr>
+    `;
+
+    slicedPackages.forEach(p => {
+        let locationText = p.location ? p.location : "slackel/slackel64-current";
+        let locationHtml = p.location_url ? `<a href="${p.location_url}" target="_blank">${locationText}</a>` : locationText;
+
+        html += `
+        <tr>
+        <td>${Number(p.rank).toFixed(4)}</td>
+        <td><a href="package.html?package=${encodeURIComponent(p.name)}&repo=${p.repository_id}&arch=${encodeURIComponent(selectedArch)}">${p.name}</a></td>
+        <td>${p.version}</td>
+        <td>${p.arch}</td>
+        <td>${p.size}</td>
+        <td>${p.distro}</td>
+        <td><a href="repository.html?id=${p.repository_id}">${p.repository}</a></td>
+        <td>${locationHtml}</td>
+        <td><a href="${p.download}" target="_blank">Download</a></td>
+        </tr>
+        `;
+    });
+
+    html += "</table>";
+    document.getElementById("results").innerHTML = html;
+
+    // Υπολογισμός συνολικών σελίδων και σχεδίαση των διπλών κουμπιών
+    let totalPages = Math.ceil(allFetchedPackages.length / perPage);
+    renderPagination(currentPage, totalPages);
+}
+
+// ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Σχεδιάζει τα κουμπιά πλοήγησης ταυτόχρονα ΠΑΝΩ και ΚΑΤΩ
+function renderPagination(currentPage, totalPages) {
+    const topContainer = document.getElementById("pagination-container-top");
+    const bottomContainer = document.getElementById("pagination-container");
+    
+    topContainer.innerHTML = "";
+    bottomContainer.innerHTML = "";
+
+    if (totalPages <= 1) return;
+
+    // Εσωτερική βοηθητική συνάρτηση για τη δημιουργία της γραμμής κουμπιών
+    function createControls() {
+        const wrapper = document.createDocumentFragment();
+
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "« Previous";
+        prevBtn.style.cursor = "pointer";
+        prevBtn.disabled = (currentPage === 1);
+        prevBtn.addEventListener("click", () => {
+            displayCurrentPage(currentPage - 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Αυτόματο scroll πάνω στην αλλαγή
+        });
+
+        const infoSpan = document.createElement("span");
+        infoSpan.style.margin = "0 15px";
+        infoSpan.style.fontWeight = "500";
+        infoSpan.innerHTML = `Page <b>${currentPage}</b> of <b>${totalPages}</b>`;
+
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "Next »";
+        nextBtn.style.cursor = "pointer";
+        nextBtn.disabled = (currentPage === totalPages);
+        nextBtn.addEventListener("click", () => {
+            displayCurrentPage(currentPage + 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Αυτόματο scroll πάνω στην αλλαγή
+        });
+
+        wrapper.appendChild(prevBtn);
+        wrapper.appendChild(infoSpan);
+        wrapper.appendChild(nextBtn);
+        return wrapper;
+    }
+
+    // Προσθήκη των κουμπιών και στα δύο containers της HTML
+    topContainer.appendChild(createControls());
+    bottomContainer.appendChild(createControls());
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    let referrer = document.referrer;
+    let hostname = window.location.hostname;
+
+    if (!referrer || !referrer.includes(hostname)) {
+        window.history.pushState(null, null, window.location.href);
+    }
+
+    if (referrer && referrer.includes('stats.html')) {
+        window.history.pushState(null, null, window.location.href);
+    }
+    
+    initTheme();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('search');
+    const archParam = urlParams.get('arch');
+    const distroParam = urlParams.get('distro');
+    
+    let systemKeywords = [
+        "i486", "i386", "x86_64", "noarch", "current", "mixed",
+        "15.0", "14.2", "14.1", "14.0", "slackel",
+        "salix 15.0", "salix 14.2", "salix 14.1", "salix 14.0",
+        "slackware current", "slackware 15.0", "slackware 14.2", "slackware 14.1", "slackware 14.0"
+    ];
+
+    let distroSelect = document.getElementById("distro_filter");
+
+    if (distroParam) {
+        let cleanDistro = distroParam.toLowerCase().trim();
+        if (cleanDistro === "slackel" || cleanDistro === "current") {
+            distroSelect.value = "slackel";
+        } else {
+            for (let i = 0; i < distroSelect.options.length; i++) {
+                if (distroSelect.options[i].value === cleanDistro) {
+                    distroSelect.value = cleanDistro;
+                    break;
+                }
+            }
+        }
+    }
+    if (searchParam) {
+        let cleanParam = searchParam.toLowerCase().trim();
+        let isSystem = systemKeywords.includes(cleanParam) || cleanParam.startsWith("salix") || cleanParam.startsWith("slackware");
+
+        if (isSystem) {
+            document.getElementById("search").value = "";
+            activeRepoFilter = cleanParam;
+
+            if (!distroParam) {
+                if (cleanParam === "slackel" || cleanParam === "current") {
+                    distroSelect.value = "slackel";
+                } else {
+                    for (let i = 0; i < distroSelect.options.length; i++) {
+                        if (distroSelect.options[i].value === cleanParam) {
+                            distroSelect.value = cleanParam;
+                            break;
+                        }
+                    }
+                }
+            }
+ 
+            if (cleanParam === "i486" || cleanParam === "i386") {
+                let radio = document.querySelector('input[name="arch"][value="i386"]');
+                if (radio) radio.checked = true;
+                activeRepoFilter = "";
+            } else if (cleanParam === "x86_64") {
+                let radio = document.querySelector('input[name="arch"][value="x86_64"]');
+                if (radio) radio.checked = true;
+                activeRepoFilter = "";
+            } else if (cleanParam === "noarch") {
+                let radio = document.querySelector('input[name="arch"][value="noarch"]');
+                if (radio) radio.checked = true;
+                activeRepoFilter = "";
+            }
+        } else {
+            document.getElementById("search").value = searchParam;
+            activeRepoFilter = "";
+        }
+    }
+
+    if (archParam && ["all", "i386", "x86_64", "noarch"].includes(archParam.toLowerCase())) {
+        let targetRadio = document.querySelector(`input[name="arch"][value="${archParam.toLowerCase()}"]`);
+        if (targetRadio) {
+            targetRadio.checked = true;
+        }
+    }
+    
+    // Σωστό, σχετικό μονοπάτι χωρίς αρχική κάθετο
+    fetch('api/stats.py').catch(err => console.error(err));
+
+    if (document.getElementById("search").value.trim() !== "") {
+        searchPackages(); // Εκκίνηση της αρχικής αναζήτησης
+    }
+    
+    setTimeout(() => {
+        isInitialSetup = false;
+    }, 200);
+}); // Εδώ κλείνει το DOMContentLoaded
+
+// Εξασφαλίζει τον καθαρισμό σε κάθε Back/Forward στον Firefox
+window.addEventListener("pageshow", (event) => {
+    activeRepoFilter = "";
+    if (window.location.search) {
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+});
+</script>
+</body>
+</html>

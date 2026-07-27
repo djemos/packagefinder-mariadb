@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/repository.ico" />
+<meta charset="utf-8">
+<title>Repository Info</title>
+
+<style>
+/* ΟΡΙΣΜΟΣ ΜΕΤΑΒΛΗΤΩΝ ΓΙΑ LIGHT ΚΑΙ DARK MODE */
+:root {
+    --bg-color: #fdfdfd;
+    --text-color: #333333;
+    --heading-color: #222222;
+    --card-bg: #ffffff;
+    --card-border: #ccc;
+    --table-th-bg: #f4f4f4;
+    --table-hover: #f9f9f9;
+}
+
+body.dark-mode {
+    --bg-color: #1a202c;
+    --text-color: #e2e8f0;
+    --heading-color: #ffffff;
+    --card-bg: #2d3748;
+    --card-border: #4a5568;
+    --table-th-bg: #4a5568;
+    --table-hover: #2d3748;
+}
+
+body {
+    font-family: sans-serif;
+    margin:30px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+.nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.theme-toggle-btn {
+    background: #4a5568;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+body.dark-mode .theme-toggle-btn {
+    background: #edf2f7;
+    color: #1a202c;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    background: var(--card-bg);
+}
+
+td, th {
+    border: 1px solid var(--card-border);
+    padding: 8px;
+}
+
+th {
+    text-align: left;
+    background: var(--table-th-bg);
+    width: 220px;
+}
+
+tr:hover {
+    background: var(--table-hover);
+}
+
+a {
+    color: #4299e1;
+}
+
+/* Στυλ για το Footer */
+.footer {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid var(--card-border);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-weight: 500;
+}
+.footer a {
+    color: #4299e1;
+    text-decoration: none;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<div class="nav-header">
+    <div>
+        <a href="javascript:history.back()" style="text-decoration: none;">
+            <span style="text-decoration: none; display: inline-block;">←</span> 
+            <span style="text-decoration: underline;">Back</span>
+        </a>
+        |
+        <a href="index.html">Slackel Package Finder</a>
+    </div>
+    <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+</div>
+
+<h1>Repository Info</h1>
+
+<div id="info">Loading...</div>
+
+<!-- Το HTML του Footer -->
+<div class="footer">
+    &copy; 2026 Developed by <strong>Dimitris Tzemos</strong>. All rights reserved | <a href="index.html">Slackel Package Finder</a>
+</div>
+<script>
+// Συναρτήσεις για τη διαχείριση του Dark Mode
+function initTheme() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-toggle').innerText = "☀️ Light Mode";
+    }
+}
+
+function toggleTheme() {
+    let btn = document.getElementById('theme-toggle');
+    if (document.body.classList.contains('dark-mode')) {
+        document.body.classList.remove('dark-mode');
+        btn.innerText = "🌙 Dark Mode";
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.add('dark-mode');
+        btn.innerText = "☀️ Light Mode";
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+// Αρχικοποίηση θέματος
+initTheme();
+
+let params = new URLSearchParams(window.location.search);
+let id = params.get("id");
+console.log("Repository ID:", id);
+
+fetch("/api/repository.py?id=" + encodeURIComponent(id))
+.then(response => response.json())
+.then(repo => {
+    console.log(repo);
+
+    let html = `
+<table>
+<tr><th>ID</th><td>${repo.id}</td></tr>
+<tr><th>Name</th><td>${repo.name}</td></tr>
+<tr>
+<th>URL</th>
+<td>
+<a href="${repo.url}" target="_blank">
+${repo.url}
+</a>
+</td>
+</tr>
+<tr><th>Rank</th><td>${repo.rank}</td></tr>
+<tr><th>Packages</th><td>${repo.packages}</td></tr>
+<tr>
+<th>File list</th>
+<td>
+${
+    repo.file_list && repo.file_list !== "unsupported"
+    ?
+    `<a href="${repo.url}${repo.file_list}" target="_blank">
+    ${repo.file_list}
+    </a>`
+    :
+    "unsupported"
+}
+</td>
+</tr>
+<tr><th>Slackware Version</th><td>${repo.slackware_version}</td></tr>
+<tr><th>Arch</th><td>${repo.arch}</td></tr>
+<tr><th>Class</th><td>${repo.class}</td></tr>
+<tr><th>Last update</th><td>${repo.last_update}</td></tr>
+<tr><th>Name ID</th><td>${repo.repository_name}</td></tr>
+<tr><th>Nr. of packages</th><td>${repo.nr_packages}</td></tr>
+<tr><th>Nr. of files</th><td>${repo.nr_files}</td></tr>
+<tr><th>Dependencies</th><td>${repo.dependencies}</td></tr>
+<tr><th>Description</th><td>${repo.description}</td></tr>
+<tr><th>Brief Descr.</th><td>${repo.brief}</td></tr>
+</table>
+`;
+
+    document.getElementById("info").innerHTML = html;
+})
+.catch(error => {
+    document.getElementById("info").innerHTML = "ERROR: " + error;
+});
+</script>
+
+</body>
+</html>
