@@ -62,7 +62,7 @@ daily_counts = []
 daily_dates = []
 today_date = datetime.now()
 
-for i in range(125, -1, -1):
+for i in range(119, -1, -1):
     target_date = today_date - timedelta(days=i)
     date_str = target_date.strftime('%Y-%m-%d')
     daily_dates.append(date_str)
