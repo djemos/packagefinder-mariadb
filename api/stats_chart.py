@@ -62,7 +62,7 @@ daily_counts = []
 daily_dates = []
 today_date = datetime.now()
 
-for i in range(119, -1, -1):
+for i in range(125, -1, -1):
     target_date = today_date - timedelta(days=i)
     date_str = target_date.strftime('%Y-%m-%d')
     daily_dates.append(date_str)
@@ -231,6 +231,27 @@ if points_7:
 
 # --- Layer 4: Εμφάνιση Μήνα στην Κορυφή & Κατακόρυφες Γραμμές Διαχωρισμού ---
 last_month = None
+
+# ΒΗΜΑ Α: Υπολογίζουμε πόσες ημέρες έχει ο πρώτος μήνας στην αρχή του γραφήματος
+first_month_name = None
+first_month_days = 0
+
+for date_str in daily_dates:
+    try:
+        m_name = datetime.strptime(date_str, '%Y-%m-%d').strftime('%b')
+        if first_month_name is None:
+            first_month_name = m_name
+        if m_name == first_month_name:
+            first_month_days += 1
+        else:
+            break  # Σταματάμε μόλις αλλάξει ο πρώτος μήνας
+    except Exception:
+        pass
+
+# ΔΙΟΡΘΩΣΗ: Καλύπτουμε όλο το εύρος από 115 έως 125 ημέρες
+is_full_period = (115 <= len(daily_counts) <= 125)
+
+# ΒΗΜΑ Β: Σχεδίαση των Μηνών με βάση τους νέους κανόνες ασφαλείας
 for index, date_str in enumerate(daily_dates):
     x0 = graph_offset_left + (index * (bar_width + space))
     try:
@@ -238,6 +259,13 @@ for index, date_str in enumerate(daily_dates):
         current_month = date_obj.strftime('%b')
         
         if current_month != last_month:
+            # ΚΑΝΟΝΑΣ 1: Αν είμαστε στην πλήρη περίοδο (119-123 ημέρες) ΚΑΙ ο πρώτος μήνας 
+            # έχει 8 ή λιγότερες ημέρες, τότε κάνουμε SKIP τον πρώτο μήνα (Μάρτιο).
+            if is_full_period and current_month == first_month_name and first_month_days <= 8:
+                last_month = current_month
+                continue
+                
+            # ΚΑΝΟΝΑΣ 2: Σε κάθε άλλη περίπτωση (μικρότερη περίοδος), σχεδιάζουμε κανονικά όλους τους μήνες.
             draw.line([(x0, 2), (x0, img_height)], fill=red_month_color, width=1)
             draw.text((x0 + 3, 1), current_month, fill=red_month_color, font=font)
             last_month = current_month
