@@ -20,8 +20,8 @@ if not user_agent or any(agent in user_agent for agent in bad_agents):
 
 # ΣΤΟΙΧΕΙΑ ΣΥΝΔΕΣΗΣ MARIAΒD (SLACKWARE)
 DB_CONFIG = {
-    'user': 'djemos',
-    'password': 'djemos',
+    'user': 'your_user',
+    'password': 'your_password',
     'database': 'slackel_stats',
     'unix_socket': '/var/run/mysql/mysql.sock',
     'auth_plugin': 'mysql_native_password',
