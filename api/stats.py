@@ -29,8 +29,8 @@ LOCKOUT_DURATION = 900        # 15 λεπτά αποκλεισμού σε δευ
 
 # ΣΤΟΙΧΕΙΑ ΣΥΝΔΕΣΗΣ MARIAΒD (SLACKWARE)
 DB_CONFIG = {
-    'user': 'djemos',
-    'password': 'djemos',
+    'user': 'your_user',
+    'password': 'your_password',
     'database': 'slackel_stats',
     'unix_socket': '/var/run/mysql/mysql.sock',
     'auth_plugin': 'mysql_native_password',
