@@ -1,6 +1,6 @@
 1. ADD This to httpd-vhosts.conf 
-#Start of: This is for slackel package finder
-<Directory "/srv/httpd/htdocs/slackware-browser/api">
+#Start of: This is for slackel package finder Replace packagefinder.ddnsfree.com with your domain name
+<Directory "/srv/httpd/htdocs/packagefinder/api">
     Options +ExecCGI
     AddHandler cgi-script .py
     Require all granted
@@ -26,39 +26,52 @@ SSLSessionCacheTimeout  300
 ####
 
 <VirtualHost *:80>
-    ServerAdmin webmaster@slackel.ddns.net
-    DocumentRoot "/srv/httpd/htdocs/slackware-browser"
-    ServerName slackel.ddns.net
-    ErrorLog "/var/log/httpd/slackel.ddns.net-error_log"
-    CustomLog "/var/log/httpd/slackel.ddns.net-access_log" common
+    ServerAdmin webmaster@packagefinder.ddnsfree.com
+    DocumentRoot "/srv/httpd/htdocs/packagefinder"
+    ServerName packagefinder.ddnsfree.com
+    ErrorLog "/var/log/httpd/packagefinder.ddnsfree.com-error_log"
+    CustomLog "/var/log/httpd/packagefinder.ddnsfree.com-access_log" common
     
-    <If "%{REQUEST_URI} !~ m#/\.well-known/acme-challenge/#">
-        Redirect permanent / https://slackel.ddns.net/slackel/
-    </If> 
+	# to be able to use it for multiple domains. You'd use this snippet:
+	Alias /.well-known/acme-challenge/ /var/www/dehydrated/
+	<Directory /var/www/dehydrated/>
+		Options None
+		AllowOverride None
+		Require all granted
+	</Directory>
     
     RewriteEngine On
 	RewriteCond %{HTTPS} off
-	RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
-	#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+	#RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+	RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 </VirtualHost>
 
 <VirtualHost *:443>
 #   General setup for the virtual host
-DocumentRoot "/srv/httpd/htdocs/slackware-browser"
-ServerName slackel.ddns.net:443
-ServerAdmin webmaster@slackel.ddns.net
-ErrorLog "/var/log/httpd/slackel.ddns.net-error_log"
-TransferLog "/var/log/httpd/slackel.ddns.net-access_log"
+DocumentRoot "/srv/httpd/htdocs/packagefinder"
+ServerName packagefinder.ddnsfree.com:443
+ServerAdmin webmaster@packagefinder.ddnsfree.com
+ErrorLog "/var/log/httpd/packagefinder.ddnsfree.com-error_log"
+TransferLog "/var/log/httpd/packagefinder.ddnsfree.com-access_log"
+
+# 1. NEW: Enable .htaccess for the entire site (Homepage)
+<Directory "/srv/httpd/htdocs/packagefinder">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
 
 #Start of: This is for slackel package finder
-<Directory "/srv/httpd/htdocs/slackware-browser/api">
+# 2. Υπάρχον: Ρύθμιση για το slackel package finder (API)
+<Directory "/srv/httpd/htdocs/packagefinder/api">
     Options +ExecCGI
     AddHandler cgi-script .py
+    AllowOverride All
     Require all granted
 </Directory>
 #End of: This is for slackel package finder
 
-# We store the dehydrated info under /usr/local and use an Apache 'Alias'
+# We store the dehydrated info under /var/www/dehydrated and use an Apache 'Alias'
 	# to be able to use it for multiple domains. You'd use this snippet:
 	Alias /.well-known/acme-challenge/ /var/www/dehydrated/
 	<Directory /var/www/dehydrated/>
@@ -69,9 +82,9 @@ TransferLog "/var/log/httpd/slackel.ddns.net-access_log"
 	
 SSLEngine on
 
-SSLCertificateFile       /etc/dehydrated/certs-letsencrypt/slackel.ddns.net/cert.pem
-SSLCertificateKeyFile    /etc/dehydrated/certs-letsencrypt/slackel.ddns.net/privkey.pem
-SSLCertificateChainFile  /etc/dehydrated/certs-letsencrypt/slackel.ddns.net/chain.pem
+SSLCertificateFile       /etc/dehydrated/certs-letsencrypt/packagefinder.ddnsfree.com/cert.pem
+SSLCertificateKeyFile    /etc/dehydrated/certs-letsencrypt/packagefinder.ddnsfree.com/privkey.pem
+SSLCertificateChainFile  /etc/dehydrated/certs-letsencrypt/packagefinder.ddnsfree.com/chain.pem
 
 #SSLCACertificatePath "/etc/ssl/certs"
 #SSLCACertificateFile "/etc/ssl/certs/ca.crt"
