@@ -99,8 +99,15 @@ pre {
     padding: 15px;
     border-left: 4px solid #2d7;
     font-family: monospace;
-    white-space: pre-wrap;
-    max-width: 800px;
+    white-space: pre; 
+    overflow-x: auto; 
+    
+    /* Dynamic expansion based on content */
+    width: max-content;       /* Expands as much as the text needs */
+    min-width: 800px;         /* Keeps a nice baseline if the text is short */
+    max-width: 100%;          /* Never exceeds 100% of the user's screen */
+    box-sizing: border-box;   /* Correct calculation of borders and padding */
+    
     font-size: 14px;
     border-top: 1px solid var(--card-border);
     border-right: 1px solid var(--card-border);
